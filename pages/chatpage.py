@@ -18,9 +18,19 @@ def init_connection():
 
 client = init_connection()
 db = client.mito
-collection = db.chat_sessions
-        
+collection = db.chat_sessions    
 def main():
+    user_id="test_user"
+    chat_sessions = collection.find({"user_id": user_id})
+    session_num=len(list(collection.find({"user_id": user_id})))
+    if session_num != 0:
+        sec_chat={}
+        for session in chat_sessions:
+            
+            session_id = session["id"]
+            sec_chat[session_id]=session['chat_log']
+            st.sidebar.button(session_id)
+    
     if st.button("チャット履歴を保存"):
         chat_log = {
             "user_id": "test_user",
