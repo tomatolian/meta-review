@@ -48,9 +48,12 @@ def main():
     # チャット履歴を管理するためのリストを用意
     if 'chat_history' not in st.session_state:
         st.session_state['chat_history'] = []
-
+    print(st.session_state['chat_history'])
     # 過去のチャット履歴をページに表示
-    for user_message, assistant_message,_ in st.session_state['chat_history']:
+    for session in st.session_state['chat_history']:
+        print("session_log",session)
+        user_message = session["user"]
+        assistant_message = session["assistant"]
         st.chat_message("user").write(user_message)
         if assistant_message:
             st.chat_message("assistant").write(assistant_message)
@@ -73,7 +76,6 @@ def main():
                 },
                 callbacks=[st_callback]
             )
-
             # アシスタントの応答を表示
             st.write(response)
 
