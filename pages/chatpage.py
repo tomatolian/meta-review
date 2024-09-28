@@ -29,6 +29,7 @@ def main():
         }
         collection.insert_one(chat_log)
         st.success("チャット履歴が保存されました！")
+        st.session_state['chat_history']=[]
 
 
     # OpenAIのLLMを初期化
