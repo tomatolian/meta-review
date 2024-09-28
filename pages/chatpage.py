@@ -49,7 +49,7 @@ def main():
         st.session_state['chat_history'] = []
 
     # 過去のチャット履歴をページに表示
-    for user_message, assistant_message in st.session_state['chat_history']:
+    for user_message, assistant_message,_ in st.session_state['chat_history']:
         st.chat_message("user").write(user_message)
         if assistant_message:
             st.chat_message("assistant").write(assistant_message)
@@ -60,7 +60,7 @@ def main():
         st.chat_message("user").write(prompt)
 
         # チャット履歴を更新
-        st.session_state['chat_history'].append({"user":prompt, "assistant":None})  # Noneはアシスタントの返答のプレースホルダー
+        st.session_state['chat_history'].append({"user":prompt, "assistant":None,"timestamp":datetime.now()})  # Noneはアシスタントの返答のプレースホルダー
 
         # アシスタントの応答を取得
         with st.chat_message("assistant"):
@@ -77,6 +77,6 @@ def main():
             st.write(response)
 
             # チャット履歴にアシスタントの応答を追加
-            st.session_state['chat_history'][-1] = {"user":prompt, "assistant":response}
+            st.session_state['chat_history'][-1] = {"user":prompt, "assistant":response,"timestamp":datetime.now()}
 
 main()
