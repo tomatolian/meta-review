@@ -33,7 +33,7 @@ def main():
             for session in chat_sessions:
                 st.write(f"セッション開始: {session['timestamp']}")
                 print(session)
-                for log in session['chat_log']:
+                for log in session['chat_history']:
                     print("log",log)
                     st.write(f"**ユーザー**: {log['user']}")
                     st.write(f"**アシスタント**: {log['assistant']}")

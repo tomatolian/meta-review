@@ -60,7 +60,7 @@ def main():
         st.chat_message("user").write(prompt)
 
         # チャット履歴を更新
-        st.session_state['chat_history'].append((prompt, None))  # Noneはアシスタントの返答のプレースホルダー
+        st.session_state['chat_history'].append({"user":prompt, "assistant":None})  # Noneはアシスタントの返答のプレースホルダー
 
         # アシスタントの応答を取得
         with st.chat_message("assistant"):
@@ -77,6 +77,6 @@ def main():
             st.write(response)
 
             # チャット履歴にアシスタントの応答を追加
-            st.session_state['chat_history'][-1] = (prompt, response)
+            st.session_state['chat_history'][-1] = {"user":prompt, "assistant":response}
 
 main()
