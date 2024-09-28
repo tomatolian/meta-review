@@ -22,7 +22,6 @@ def main():
 
     if user_id:
         # user_idでチャットセッションを検索
-        user_id = "session_001"
         chat_sessions = collection.find({"user_id": user_id})
         chat_sessions = list(chat_sessions)
         print("aaaljgeo",chat_sessions)
