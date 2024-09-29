@@ -18,7 +18,6 @@ def init_connection():
 client = init_connection()
 db = client.mito
 collection = db.chat_sessions    
-print("sf",st.session_state["session_info"]['chat_history'][0])
 
 def main():
     user_id="test_user"
@@ -30,8 +29,7 @@ def main():
             session_id = session["_id"]
             sec_chat[session_id]=session['chat_history']
             user_question = sec_chat[session_id][0]["user"]
-            title = user_question[:15] if len(user_question)>15 else user_question 
-            print(title,type(title))
+            title = user_question[:15] if len(user_question)>15 else user_question
             st.sidebar.button(title, key=str(session_id))
     
     if st.button("チャット履歴を保存"):
