@@ -56,7 +56,7 @@ def main():
             "chat_history":[{"user":user_question, "assistant":None,"timestamp":datetime.now()}],
             "main":main_category,
             "sub":sub_category,
-            "small":small_category
+            "small":small_category,
             "timestamp": datetime.now()
         }
             st.session_state["session_info"]=chat_log
