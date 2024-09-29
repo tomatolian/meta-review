@@ -19,4 +19,4 @@ streamlit run app.py
 ```
 
 ## Contributors
-- jun suzuki
+- [tomatolian](https://github.com/tomatolian)
