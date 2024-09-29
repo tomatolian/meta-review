@@ -53,7 +53,10 @@ def main():
             st.write(f'エラー内容: {user_question}')
             chat_log = {
             "user_id": user_id,
-            "chat_history":[{"user":user_question, "assistant":None,"timestamp":datetime.now(), "main":main_category, "sub":sub_category,"small":small_category}],
+            "chat_history":[{"user":user_question, "assistant":None,"timestamp":datetime.now()}],
+            "main":main_category,
+            "sub":sub_category,
+            "small":small_category
             "timestamp": datetime.now()
         }
             st.session_state["session_info"]=chat_log
