@@ -39,6 +39,7 @@ def main():
         }
         collection.insert_one(chat_log)
         st.success("チャット履歴が保存されました！")
+        st.session_state['chat_history']=[]
 
 
     # OpenAIのLLMを初期化
@@ -57,9 +58,12 @@ def main():
     # チャット履歴を管理するためのリストを用意
     if 'chat_history' not in st.session_state:
         st.session_state['chat_history'] = []
-
+    print(st.session_state['chat_history'])
     # 過去のチャット履歴をページに表示
-    for user_message, assistant_message in st.session_state['chat_history']:
+    for session in st.session_state['chat_history']:
+        print("session_log",session)
+        user_message = session["user"]
+        assistant_message = session["assistant"]
         st.chat_message("user").write(user_message)
         if assistant_message:
             st.chat_message("assistant").write(assistant_message)
@@ -70,7 +74,7 @@ def main():
         st.chat_message("user").write(prompt)
 
         # チャット履歴を更新
-        st.session_state['chat_history'].append((prompt, None))  # Noneはアシスタントの返答のプレースホルダー
+        st.session_state['chat_history'].append({"user":prompt, "assistant":None,"timestamp":datetime.now()})  # Noneはアシスタントの返答のプレースホルダー
 
         # アシスタントの応答を取得
         with st.chat_message("assistant"):
@@ -82,11 +86,10 @@ def main():
                 },
                 callbacks=[st_callback]
             )
-
             # アシスタントの応答を表示
             st.write(response)
 
             # チャット履歴にアシスタントの応答を追加
-            st.session_state['chat_history'][-1] = (prompt, response)
+            st.session_state['chat_history'][-1] = {"user":prompt, "assistant":response,"timestamp":datetime.now()}
 
 main()

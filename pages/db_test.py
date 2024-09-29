@@ -22,10 +22,10 @@ def main():
 
     if user_id:
         # user_idでチャットセッションを検索
-        user_id = "session_001"
         chat_sessions = collection.find({"user_id": user_id})
         chat_sessions = list(chat_sessions)
         print("aaaljgeo",chat_sessions)
+
         # セッションが存在するか確認
         if len(chat_sessions) == 0:
             st.write("このユーザーIDに該当するチャット履歴は見つかりませんでした。")
@@ -34,7 +34,7 @@ def main():
             for session in chat_sessions:
                 st.write(f"セッション開始: {session['timestamp']}")
                 print(session)
-                for log in session['chat_log']:
+                for log in session['chat_history']:
                     print("log",log)
                     st.write(f"**ユーザー**: {log['user']}")
                     st.write(f"**アシスタント**: {log['assistant']}")
