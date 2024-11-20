@@ -7,8 +7,9 @@ from pymongo import MongoClient
 import streamlit as st
 
 load_dotenv()
-MONGO_URI = os.getenv("MONGO_URI")
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
+MONGO_URI = st.secrets["section1"]["MONGO_URI"]
+openai.api_key = st.secrets["section1"]["OPENAI_API_KEY"]
 
 @st.cache_resource
 def init_connection():
