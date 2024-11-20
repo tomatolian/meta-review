@@ -10,10 +10,10 @@ st.set_page_config(page_title="Streamlit App", page_icon=":shark:")
 
 question_input = st.Page(page="pages/question_input.py", title="質問入力画面")
 chat = st.Page(page="pages/chatpage.py", title="chat", icon=":material/home:")
-test = st.Page(page="pages/db_test.py", title="test")
+confirm = st.Page(page="pages/confirm.py", title="確認", icon=":material/check:")
 
 
-pg = st.navigation([question_input,chat,test])
+pg = st.navigation([question_input,chat,confirm])
 
 
 

@@ -32,15 +32,27 @@ def main():
             title = user_question[:15] if len(user_question)>15 else user_question
             st.sidebar.button(title, key=str(session_id))
     
-    if st.button("チャット履歴を保存"):
+    if st.button("解決"):
         chat_log = {
             "user_id": "test_user",
             "chat_history": st.session_state["session_info"]['chat_history'],
-            "timestamp": datetime.now()
+            "timestamp": datetime.now(),
+            "solve":True
         }
-        collection.insert_one(chat_log)
-        st.success("チャット履歴が保存されました！")
-        st.session_state["session_info"]['chat_history']=[]
+        st.session_state["session_info"]["chat_log"]=chat_log
+        st.switch_page("pages/confirm.py")
+
+
+
+    if st.button("未解決"):
+        chat_log = {
+            "user_id": "test_user",
+            "chat_history": st.session_state["session_info"]['chat_history'],
+            "timestamp": datetime.now(),
+            "solve":False
+        }
+        st.session_state["session_info"]["chat_log"]=chat_log
+        st.switch_page("pages/confirm.py")
 
 
     # OpenAIのLLMを初期化
@@ -63,12 +75,9 @@ def main():
         st.chat_message("user").write(user_message)
         if assistant_message:
             st.chat_message("assistant").write(assistant_message)
-    
+    print(st.session_state["session_info"]['chat_history'])
     if st.session_state["session_info"]['chat_history'][0]["assistant"]==None:
         prompt = st.session_state["session_info"]['chat_history'][0]["user"]
-
-        # チャット履歴を更新
-        st.session_state["session_info"]['chat_history'].append({"user":prompt, "assistant":None,"timestamp":datetime.now()})  # Noneはアシスタントの返答のプレースホルダー
 
         # アシスタントの応答を取得
         with st.chat_message("assistant"):
