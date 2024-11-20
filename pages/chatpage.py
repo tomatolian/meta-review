@@ -5,11 +5,10 @@ from langchain.chat_models import ChatOpenAI
 from langchain.agents import AgentType, initialize_agent
 from langchain.callbacks import StreamlitCallbackHandler
 import streamlit as st
-from dotenv import load_dotenv
 from pymongo import MongoClient
-load_dotenv()
-MONGO_URI = os.getenv("MONGO_URI")
-openai.api_key = os.getenv("OPENAI_API_KEY")
+
+MONGO_URI = st.secrets["section1"]["MONGO_URI"]
+openai.api_key = st.secrets["section1"]["OPENAI_API_KEY"]
 
 @st.cache_resource
 def init_connection():

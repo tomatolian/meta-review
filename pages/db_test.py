@@ -4,8 +4,8 @@ import asyncio
 from dotenv import load_dotenv
 from pymongo import MongoClient
 load_dotenv()
-MONGO_URI = os.getenv("MONGO_URI")
-print(MONGO_URI)
+MONGO_URI = st.secrets["section1"]["MONGO_URI"]
+
 @st.cache_resource
 def init_connection():
     return MongoClient(MONGO_URI)    
