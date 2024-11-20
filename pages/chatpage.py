@@ -8,7 +8,7 @@ import streamlit as st
 from pymongo import MongoClient
 
 MONGO_URI = st.secrets["section1"]["MONGO_URI"]
-openai.api_key = st.secrets["section1"]["OPENAI_API_KEY"]
+api_key = st.secrets["section1"]["OPENAI_API_KEY"]
 
 @st.cache_resource
 def init_connection():
@@ -55,7 +55,7 @@ def main():
 
 
     # OpenAIのLLMを初期化
-    llm = ChatOpenAI(temperature=0,streaming=True)
+    llm = ChatOpenAI(temperature=0,openai_api_key=api_key,streaming=True)
 
     # ツールなしでエージェントを初期化
     tools = [] 
