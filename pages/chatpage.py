@@ -1,11 +1,15 @@
 from datetime import datetime
 import os
 import openai
-from langchain.chat_models import ChatOpenAI
-from langchain.agents import AgentType, initialize_agent
-from langchain.callbacks import StreamlitCallbackHandler
+from langchain_openai import ChatOpenAI
+from langchain.agents import AgentExecutor, create_openai_tools_agent
+from langchain_community.callbacks.streamlit import StreamlitCallbackHandler
 import streamlit as st
 from pymongo import MongoClient
+from langchain.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain.memory import ConversationBufferMemory
+from langchain.schema import SystemMessage
+from langchain.tools import Tool
 
 MONGO_URI = st.secrets["section1"]["MONGO_URI"]
 api_key = st.secrets["section1"]["OPENAI_API_KEY"]
@@ -57,13 +61,34 @@ def main():
     # OpenAIのLLMを初期化
     llm = ChatOpenAI(temperature=0,openai_api_key=api_key,streaming=True)
 
-    # ツールなしでエージェントを初期化
-    tools = [] 
-    # ReActエージェントを、ツールなしでも動作可能なエージェントタイプに変更
-    agent = initialize_agent(
-        tools=tools,
+    # プロンプトテンプレートを作成
+    prompt = ChatPromptTemplate.from_messages([
+        ("system", "あなたは親切なアシスタントです。日本語で応答してください。"),
+        ("human", "{input}"),
+        MessagesPlaceholder(variable_name="chat_history"),
+        MessagesPlaceholder(variable_name="agent_scratchpad")
+    ])
+
+    # ダミーのツールを作成
+    tools = [
+        Tool(
+            name="dummy",
+            func=lambda x: "dummy",
+            description="ダミーツール"
+        )
+    ]
+
+    # エージェントの初期化
+    agent = create_openai_tools_agent(
         llm=llm,
-        agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,  # エージェントタイプを変更
+        tools=tools,
+        prompt=prompt
+    )
+    
+    # AgentExecutorの作成
+    agent_executor = AgentExecutor(
+        agent=agent,
+        tools=tools,
         verbose=True
     )
 
@@ -74,48 +99,45 @@ def main():
         st.chat_message("user").write(user_message)
         if assistant_message:
             st.chat_message("assistant").write(assistant_message)
-    print(st.session_state["session_info"]['chat_history'])
-    if st.session_state["session_info"]['chat_history'][0]["assistant"]==None:
+
+    # チャット履歴を正しい形式に変換する関数
+    def convert_history_to_messages(history):
+        messages = []
+        for msg in history:
+            if msg["user"]:
+                messages.append({
+                    "role": "user",
+                    "content": msg["user"]
+                })
+            if msg["assistant"]:
+                messages.append({
+                    "role": "assistant",
+                    "content": msg["assistant"]
+                })
+        return messages
+
+    # アシスタントの応答を取得
+    if st.session_state["session_info"]['chat_history'][0]["assistant"] == None:
         prompt = st.session_state["session_info"]['chat_history'][0]["user"]
 
-        # アシスタントの応答を取得
         with st.chat_message("assistant"):
-            st_callback = StreamlitCallbackHandler(st.container())  # Streamlitのコールバックハンドラ
-            response = agent.run(
+            st_callback = StreamlitCallbackHandler(st.container())
+            chat_history = convert_history_to_messages(st.session_state["session_info"]['chat_history'])
+            response = agent_executor.invoke(
                 {
-                    "input": prompt+"応答は日本語で答えてください。", 
-                    "chat_history": st.session_state["session_info"]['chat_history']  # チャット履歴を渡す
+                    "input": prompt + "応答は日本語で答えてください。",
+                    "chat_history": chat_history,
+                    "agent_scratchpad": []
                 },
-                callbacks=[st_callback]
+                config={"callbacks": [st_callback]}
             )
-            # アシスタントの応答を表示
-            st.write(response)
+            st.write(response["output"])
 
             # チャット履歴にアシスタントの応答を追加
-            st.session_state["session_info"]['chat_history'][-1] = {"user":prompt, "assistant":response,"timestamp":datetime.now()}
-            
-    # 新しいメッセージを入力した場合
-    if (prompt := st.chat_input() ):
-        # ユーザーのメッセージを表示
-        st.chat_message("user").write(prompt)
-
-        # チャット履歴を更新
-        st.session_state["session_info"]['chat_history'].append({"user":prompt, "assistant":None,"timestamp":datetime.now()})  # Noneはアシスタントの返答のプレースホルダー
-
-        # アシスタントの応答を取得
-        with st.chat_message("assistant"):
-            st_callback = StreamlitCallbackHandler(st.container())  # Streamlitのコールバックハンドラ
-            response = agent.run(
-                {
-                    "input": prompt+"応答は日本語で答えてください。", 
-                    "chat_history": st.session_state["session_info"]['chat_history']  # チャット履歴を渡す
-                },
-                callbacks=[st_callback]
-            )
-            # アシスタントの応答を表示
-            st.write(response)
-
-            # チャット履歴にアシスタントの応答を追加
-            st.session_state["session_info"]['chat_history'][-1] = {"user":prompt, "assistant":response,"timestamp":datetime.now()}
+            st.session_state["session_info"]['chat_history'][-1] = {
+                "user": prompt,
+                "assistant": response["output"],
+                "timestamp": datetime.now()
+            }
 
 main()
