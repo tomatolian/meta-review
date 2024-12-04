@@ -40,7 +40,7 @@ def main():
             "user_id": "test_user",
             "chat_history": st.session_state["session_info"]['chat_history'],
             "timestamp": datetime.now(),
-            "solve":True
+            "solved":True
         }
         st.session_state["session_info"]["chat_log"]=chat_log
         st.switch_page("pages/confirm.py")
@@ -52,7 +52,7 @@ def main():
             "user_id": "test_user",
             "chat_history": st.session_state["session_info"]['chat_history'],
             "timestamp": datetime.now(),
-            "solve":False
+            "solved":False
         }
         st.session_state["session_info"]["chat_log"]=chat_log
         st.switch_page("pages/confirm.py")
