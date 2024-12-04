@@ -6,6 +6,10 @@ from langchain.agents import AgentType, initialize_agent
 from langchain.callbacks import StreamlitCallbackHandler
 import streamlit as st
 from pymongo import MongoClient
+from langchain.schema import (
+    HumanMessage,
+    SystemMessage
+)
 
 MONGO_URI = st.secrets["section1"]["MONGO_URI"]
 api_key = st.secrets["section1"]["OPENAI_API_KEY"]
@@ -58,14 +62,14 @@ def main():
     llm = ChatOpenAI(temperature=0,openai_api_key=api_key,streaming=True)
 
     # ツールなしでエージェントを初期化
-    tools = [] 
+    # tools = [] 
     # ReActエージェントを、ツールなしでも動作可能なエージェントタイプに変更
-    agent = initialize_agent(
-        tools=tools,
-        llm=llm,
-        agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,  # エージェントタイプを変更
-        verbose=True
-    )
+    # agent = initialize_agent(
+    #     tools=tools,
+    #     llm=llm,
+    #     agent=AgentType.CONVERSATIONAL_REACT_DESCRIPTION,  # エージェントタイプを変更
+    #     verbose=True
+    # )
 
     # 過去のチャット履歴をページに表示
     for session in st.session_state["session_info"]['chat_history']:
@@ -80,14 +84,14 @@ def main():
 
         # アシスタントの応答を取得
         with st.chat_message("assistant"):
-            st_callback = StreamlitCallbackHandler(st.container())  # Streamlitのコールバックハンドラ
-            response = agent.run(
-                {
-                    "input": prompt+"応答は日本語で答えてください。", 
-                    "chat_history": st.session_state["session_info"]['chat_history']  # チャット履歴を渡す
-                },
-                callbacks=[st_callback]
-            )
+            # st_callback = StreamlitCallbackHandler(st.container())  # Streamlitのコールバックハンドラ
+            messages = [SystemMessage(f"""
+                                      応答は日本語で答えてください。
+                                      chat_history:{st.session_state["session_info"]['chat_history'] }
+                                      """),
+                        HumanMessage(f"{prompt}")
+                        ]
+            response = llm.predict_messages(messages).content
             # アシスタントの応答を表示
             st.write(response)
 
@@ -104,14 +108,14 @@ def main():
 
         # アシスタントの応答を取得
         with st.chat_message("assistant"):
-            st_callback = StreamlitCallbackHandler(st.container())  # Streamlitのコールバックハンドラ
-            response = agent.run(
-                {
-                    "input": prompt+"応答は日本語で答えてください。", 
-                    "chat_history": st.session_state["session_info"]['chat_history']  # チャット履歴を渡す
-                },
-                callbacks=[st_callback]
-            )
+            # st_callback = StreamlitCallbackHandler(st.container())  # Streamlitのコールバックハンドラ
+            messages = [SystemMessage(f"""
+                                      応答は日本語で答えてください。
+                                      chat_history:{st.session_state["session_info"]['chat_history'] }
+                                      """),
+                        HumanMessage(f"{prompt}")
+                        ]
+            response = llm.predict_messages(messages).content
             # アシスタントの応答を表示
             st.write(response)
 
