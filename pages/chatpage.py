@@ -34,27 +34,20 @@ def main():
             user_question = sec_chat[session_id][0]["user"]
             title = user_question[:15] if len(user_question)>15 else user_question
             st.sidebar.button(title, key=str(session_id))
-    
+    print("session_info",st.session_state["session_info"])
+    chat_log=st.session_state["session_info"]
     if st.button("解決"):
-        chat_log = {
-            "user_id": "test_user",
-            "chat_history": st.session_state["session_info"]['chat_history'],
-            "timestamp": datetime.now(),
-            "solve":True
-        }
-        st.session_state["session_info"]["chat_log"]=chat_log
+        chat_log["chat_history"]=st.session_state["session_info"]['chat_history']
+        chat_log["solved"]=True
+        st.session_state["session_info"]=chat_log
         st.switch_page("pages/confirm.py")
 
 
 
     if st.button("未解決"):
-        chat_log = {
-            "user_id": "test_user",
-            "chat_history": st.session_state["session_info"]['chat_history'],
-            "timestamp": datetime.now(),
-            "solve":False
-        }
-        st.session_state["session_info"]["chat_log"]=chat_log
+        chat_log["chat_history"]=st.session_state["session_info"]['chat_history']
+        chat_log["solved"]=False
+        st.session_state["session_info"]=chat_log
         st.switch_page("pages/confirm.py")
 
 

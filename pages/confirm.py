@@ -55,7 +55,7 @@ def confirm_page():
     st.title("チャット内容の確認")
 
     # st.session_stateからチャット履歴を取得
-    chat_history = st.session_state["session_info"].get("chat_log", [])
+    chat_history = st.session_state.get("session_info", [])
 
     if chat_history:
         st.write("以下のチャット内容を確認してください：")

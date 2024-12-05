@@ -2,9 +2,9 @@ import streamlit as st
 from datetime import datetime
 
 def main():
-    user_id="test_user1"
+    user_id="test_user_category"
     # 大カテゴリ、中カテゴリ、小カテゴリの階層構造
-    categories = [f"プログラミング基礎第{i}回授業".format(i) for i in range(1,9)]
+    categories = [f"プログラミング基礎第{i}回".format(i) for i in range(1,9)]
 
     # 大カテゴリを選択
     category = st.selectbox('大カテゴリを選択してください:', list(categories))
