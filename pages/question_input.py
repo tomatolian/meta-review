@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import datetime
 
 def main():
-    user_id="test_user_category"
+    user_id="test_user"
     # 大カテゴリ、中カテゴリ、小カテゴリの階層構造
     categories = [f"プログラミング基礎第{i}回".format(i) for i in range(1,9)]
 
