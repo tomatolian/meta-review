@@ -73,11 +73,14 @@ def confirm_page():
         st.success("チャット内容が確認されました。")
         chat_history = create_tag_and_youyaku(chat_history)
         st.success("タグ、要約が生成されました")
+        print("PL_debug",chat_history)
         collection.insert_one(chat_history)
         st.success("チャット内容が保存されました")
+        st.session_state["session_info"]={}
+        st.switch_page("pages/question_input.py")
 
     if st.button("戻る"):
-        st.switch_page("pages/chat")
+        st.switch_page("pages/chat.py")
 
 confirm_page()
 
