@@ -23,6 +23,11 @@ db = client.mito
 collection = db.chat_sessions    
 
 def main():
+    #例外処理
+    if not st.session_state.get("session_info"):
+        st.switch_page("pages/question_input.py")
+    
+    
     user_id="test_user"
     chat_sessions = list(collection.find({"user_id": user_id}))
     session_num=len(chat_sessions)
