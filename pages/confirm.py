@@ -1,7 +1,8 @@
 import os
 from datetime import datetime
-
+import json
 from dotenv import load_dotenv
+
 import openai
 from pymongo import MongoClient
 import streamlit as st
@@ -39,7 +40,7 @@ def create_tag_and_youyaku(chat_history):
     )
 
     # JSONレスポンスをパース
-    import json
+
     result = json.loads(response.choices[0].message.content)
     tags = result["tags"]
     question_summary=result["question_summary"]
