@@ -16,5 +16,4 @@ confirm = st.Page(page="pages/confirm.py", title="確認", icon=":material/check
 pg = st.navigation([question_input,chat,confirm])
 
 
-
 pg.run()
