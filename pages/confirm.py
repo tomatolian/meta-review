@@ -70,16 +70,16 @@ def confirm_page():
     else:
         st.write("チャット履歴がありません。")
         
-        
-    progress_text = "データを登録中です..."
-    my_bar = st.progress(0, text=progress_text)
-    my_bar.progress( 30, text=progress_text+"メタデータ作成")
-    chat_history = create_tag_and_youyaku(chat_history)
-    my_bar.progress( 60, text=progress_text+"データの登録")
-    collection.insert_one(chat_history)
-    my_bar.progress( 100, text="完了")
-    st.session_state["session_info"]={}
-    st.success("データ登録が完了しました！")
+    if st.session_state.get("session_info"):
+        progress_text = "データを登録中です..."
+        my_bar = st.progress(0, text=progress_text)
+        my_bar.progress( 30, text=progress_text+"メタデータ作成")
+        chat_history = create_tag_and_youyaku(chat_history)
+        my_bar.progress( 60, text=progress_text+"データの登録")
+        collection.insert_one(chat_history)
+        my_bar.progress( 100, text="完了")
+        st.session_state["session_info"]={}
+        st.success("データ登録が完了しました！")
 
     if st.button("もう一度質問する"):
         st.switch_page("pages/question_input.py")
