@@ -28,7 +28,7 @@ def main():
         st.switch_page("pages/question_input.py")
     
     
-    user_id="test_user"
+    user_id="debug_user"
     chat_sessions = list(collection.find({"user_id": user_id}))
     session_num=len(chat_sessions)
     
