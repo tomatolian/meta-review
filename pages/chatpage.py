@@ -64,19 +64,19 @@ def main():
         sec_chat={}
             
         # サイドバーに過去のセッションを配置
-        for session in chat_sessions:
-            print("session",session)
-            session_id = session.get("_id","now")  # 現在のセッションを雑対応
-            sec_chat[session_id]=session
-            user_question = sec_chat[session_id]['question_summary']
-            title = user_question[:15] if len(user_question)>15 else user_question
-            session_button=st.sidebar.button(title, key=str(session_id))
-            # 過去のセッションボタンをクリックしたとき
-            if session_button:
-                st.session_state["on_hold_section"]=chat_log
-                selected_session = sec_chat[session_id]
-                chat_log = selected_session
-                st.session_state["session_info"]=selected_session
+        # for session in chat_sessions:
+        #     print("session",session)
+        #     session_id = session.get("_id","now")  # 現在のセッションを雑対応
+        #     sec_chat[session_id]=session
+        #     user_question = sec_chat[session_id]['question_summary']
+        #     title = user_question[:15] if len(user_question)>15 else user_question
+        #     session_button=st.sidebar.button(title, key=str(session_id))
+        #     # 過去のセッションボタンをクリックしたとき
+        #     if session_button:
+        #         st.session_state["on_hold_section"]=chat_log
+        #         selected_session = sec_chat[session_id]
+        #         chat_log = selected_session
+        #         st.session_state["session_info"]=selected_session
         
 
     # OpenAIのLLMを初期化
