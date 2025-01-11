@@ -16,16 +16,33 @@ openai.api_key = st.secrets["section1"]["OPENAI_API_KEY"]
 def init_connection():
     return MongoClient(MONGO_URI)    
 
+def get_unique_tags(data):
+    
+    # すべてのタグを格納するセットを初期化
+    unique_tags = set()
+    
+    # 各ドキュメントからタグを抽出し、セットに追加
+    for row in data:
+        if 'tags' in row:
+            unique_tags.update(row['tags'])
+    
+    # セットをリストに変換して返す
+    return list(unique_tags)
+
 client = init_connection()
 db = client.mito
-collection = db.chat_sessions    
+collection = db.chat_sessions
+selected_category = st.session_state["session_info"]["category"]
+data = collection.find({"category":selected_category}) 
+tag_list = get_unique_tags(data)
+
 
 def create_tag_and_youyaku(chat_history):
     
     
     # OpenAIのAPIを使用してタグと要約を生成
     response = openai.chat.completions.create(
-        model="gpt-3.5-turbo-1106",
+        model="gpt-4o-mini",
         response_format={ "type": "json_object" },
         messages=[
             {
@@ -34,7 +51,9 @@ def create_tag_and_youyaku(chat_history):
             },
             {
                 "role": "user",
-                "content": f"以下の履歴から、関連するタグと質問要約,回答要約を生成してください。要約は、内容のみを端的に答えてください。履歴: { chat_history['chat_history'] }"
+                "content": f"""以下の履歴から、関連するタグと質問要約,回答要約を生成してください。要約は、内容のみを端的に答えてください。タグは、以下の#タグ一覧から適切なものを選び、タグ一覧にない要素のみ新たに生成してください。
+                履歴: { chat_history['chat_history'] }
+                タグ一覧：{ tag_list }"""
             }
         ]
     )
