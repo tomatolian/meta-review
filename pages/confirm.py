@@ -32,9 +32,10 @@ def get_unique_tags(data):
 client = init_connection()
 db = client.mito
 collection = db.chat_sessions
-selected_category = st.session_state["session_info"]["category"]
-data = collection.find({"category":selected_category}) 
-tag_list = get_unique_tags(data)
+if st.session_state.get("session_info", []):
+    selected_category = st.session_state["session_info"]["category"]
+    data = collection.find({"category":selected_category}) 
+    tag_list = get_unique_tags(data)
 
 
 def create_tag_and_youyaku(chat_history):
@@ -52,6 +53,8 @@ def create_tag_and_youyaku(chat_history):
             {
                 "role": "user",
                 "content": f"""以下の履歴から、関連するタグと質問要約,回答要約を生成してください。要約は、内容のみを端的に答えてください。タグは、以下の#タグ一覧から適切なものを選び、タグ一覧にない要素のみ新たに生成してください。
+                - タグは具象に限ること
+                - 同義のタグは二つつけないこと
                 履歴: { chat_history['chat_history'] }
                 タグ一覧：{ tag_list }"""
             }
