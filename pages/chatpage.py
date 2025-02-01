@@ -10,7 +10,6 @@ from langchain.schema import (
     HumanMessage,
     SystemMessage
 )
-from streamlit_extras.stylable_container import stylable_container
 
 MONGO_URI = st.secrets["section1"]["MONGO_URI"]
 api_key = st.secrets["section1"]["OPENAI_API_KEY"]
