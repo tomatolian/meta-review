@@ -10,6 +10,7 @@ from langchain.schema import (
     HumanMessage,
     SystemMessage
 )
+from streamlit_extras.stylable_container import stylable_container
 
 MONGO_URI = st.secrets["section1"]["MONGO_URI"]
 api_key = st.secrets["section1"]["OPENAI_API_KEY"]
@@ -23,6 +24,7 @@ db = client.mito
 collection = db.chat_sessions    
 
 def main():
+        
     #例外処理
     if not st.session_state.get("session_info"):
         st.switch_page("pages/question_input.py")
@@ -32,23 +34,23 @@ def main():
     session_num=len(chat_sessions)
     
     chat_log=st.session_state["session_info"]
-    if st.sidebar.button("解決"):
-        if chat_log.get("solved"):
-            st.warning("これはすでに登録されたセッションです。")
-        else:
-            chat_log["chat_history"]=st.session_state["session_info"]['chat_history']
-            chat_log["solved"]=True
-            st.session_state["session_info"]=chat_log
-            st.switch_page("pages/confirm.py")
+    # if st.sidebar.button("解決"):
+    #     if chat_log.get("solved"):
+    #         st.warning("これはすでに登録されたセッションです。")
+    #     else:
+    #         chat_log["chat_history"]=st.session_state["session_info"]['chat_history']
+    #         chat_log["solved"]=True
+    #         st.session_state["session_info"]=chat_log
+    #         st.switch_page("pages/confirm.py")
 
-    if st.sidebar.button("未解決"):
-        if chat_log.get("solved"):
-            st.warning("これはすでに登録されたセッションです。")
-        else:
-            chat_log["chat_history"]=st.session_state["session_info"]['chat_history']
-            chat_log["solved"]=False
-            st.session_state["session_info"]=chat_log
-            st.switch_page("pages/confirm.py")
+    # if st.sidebar.button("未解決"):
+    #     if chat_log.get("solved"):
+    #         st.warning("これはすでに登録されたセッションです。")
+    #     else:
+    #         chat_log["chat_history"]=st.session_state["session_info"]['chat_history']
+    #         chat_log["solved"]=False
+    #         st.session_state["session_info"]=chat_log
+    #         st.switch_page("pages/confirm.py")
 
     
     if session_num != 0:
@@ -87,7 +89,7 @@ def main():
         st.chat_message("user").write(user_message)
         if assistant_message:
             st.chat_message("assistant").write(assistant_message)
-    print(st.session_state["session_info"]['chat_history'])
+    
     if st.session_state["session_info"]['chat_history'][0]["assistant"]==None:
         prompt = st.session_state["session_info"]['chat_history'][0]["user"]
 
@@ -95,9 +97,9 @@ def main():
         with st.chat_message("assistant"):
             # st_callback = StreamlitCallbackHandler(st.container())  # Streamlitのコールバックハンドラ
             messages = [SystemMessage(f"""
-                                      応答は日本語で答えてください。
-                                      chat_history:{st.session_state["session_info"]['chat_history'] }
-                                      """),
+                                    応答は日本語で答えてください。
+                                    chat_history:{st.session_state["session_info"]['chat_history'] }
+                                    """),
                         HumanMessage(f"{prompt}")
                         ]
             response = llm.predict_messages(messages).content
@@ -129,8 +131,39 @@ def main():
                 response = llm.predict_messages(messages).content
                 # アシスタントの応答を表示
                 st.write(response)
-
                 # チャット履歴にアシスタントの応答を追加
                 st.session_state["session_info"]['chat_history'][-1] = {"user":prompt, "assistant":response,"timestamp":datetime.now()}
-
+        
+        info_1= st.container()
+        col1,col2 = st.columns(2)
+        info_2= st.container()
+        col3,col4 = st.columns(2)
+        with info_1:
+            st.info("満足度に基づき『解決/未解決』を選択してください")
+        with col1:
+            if st.button("解決"):
+                if chat_log.get("solved"):
+                    st.warning("これはすでに登録されたセッションです。")
+                else:
+                    chat_log["chat_history"]=st.session_state["session_info"]['chat_history']
+                    chat_log["solved"]=True
+                    st.session_state["session_info"]=chat_log
+                    st.switch_page("pages/confirm.py")
+        with col2:
+            if st.button("未解決"):
+                with info_2:
+                    st.info("お役に立てず申し訳ございません.chatの『続行/終了』を入力してください")
+                with col3:
+                    if st.button("続行"):
+                        st.write("以下のテキストウィンドウよりchatを続行してください")
+                with col4:
+                    if st.button("終了"):
+                        if chat_log.get("solved"):
+                            st.warning("これはすでに登録されたセッションです。")
+                        else:
+                            chat_log["chat_history"]=st.session_state["session_info"]['chat_history']
+                            chat_log["solved"]=False
+                            st.session_state["session_info"]=chat_log
+                            st.switch_page("pages/confirm.py")
+                
 main()
