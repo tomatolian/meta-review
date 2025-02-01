@@ -6,7 +6,7 @@ def main():
     # 大カテゴリ、中カテゴリ、小カテゴリの階層構造
     # categories = [f"プログラミング基礎第{i}回".format(i) for i in range(1,9)]
     # 耐久実験用コード
-    categories = ["AI","料理","節約","マナー","掃除","ダイエット","スタートアップ","メタバース"]
+    categories = ["メタバース"]
 
     # 大カテゴリを選択
     category = st.selectbox('大カテゴリを選択してください:', list(categories))
